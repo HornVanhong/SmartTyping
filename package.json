@@ -1,0 +1,16 @@
+{
+  "name": "typemaster-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "db:up": "docker compose -f infra/docker-compose.yml up -d",
+    "db:down": "docker compose -f infra/docker-compose.yml down",
+    "db:status": "docker compose -f infra/docker-compose.yml ps",
+    "web:dev": "npm --prefix apps/web run dev",
+    "web:build": "npm --prefix apps/web run build",
+    "web:test": "npm --prefix apps/web run test",
+    "api:build": "mvn clean package -DskipTests -f apps/api/pom.xml",
+    "api:test": "mvn test -f apps/api/pom.xml",
+    "api:run": "mvn spring-boot:run -f apps/api/pom.xml"
+  }
+}

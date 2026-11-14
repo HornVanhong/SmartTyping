@@ -1,0 +1,36 @@
+services:
+  typemaster-db:
+    image: postgres:16-alpine
+    container_name: typemaster-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-typemaster}
+      POSTGRES_USER: ${POSTGRES_USER:-typemaster}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-typemaster_dev}
+    ports:
+      - "${POSTGRES_PORT:-5434}:5432"
+    volumes:
+      - typemaster_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-typemaster} -d ${POSTGRES_DB:-typemaster}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  typemaster-redis:
+    image: redis:7-alpine
+    container_name: typemaster-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6380}:6379"
+    volumes:
+      - typemaster_redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  typemaster_pgdata:
+  typemaster_redisdata:
