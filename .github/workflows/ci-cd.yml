@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  id-token: write   # Required for AWS OIDC authentication (Zero-secret authentication)
+  contents: read
+
 jobs:
   test-frontend:
     name: Test Frontend (Next.js)
@@ -62,16 +66,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Supports both AWS OIDC Role (AWS_ROLE_ARN) and Access Keys (AWS_ACCESS_KEY_ID)
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION || 'ap-southeast-1' }}
+          aws-region: ${{ secrets.AWS_REGION || 'ap-southeast-2' }}
+          role-session-name: GitHubActionsSmartTyping-${{ github.run_id }}
 
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Ensure ECR Repository Exists
+        run: |
+          aws ecr describe-repositories --repository-names typemaster-api || \
+          aws ecr create-repository --repository-name typemaster-api --image-scanning-configuration scanOnPush=true
 
       - name: Build, tag, and push Docker image to Amazon ECR
         env:
@@ -82,3 +94,11 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -f apps/api/Dockerfile apps/api
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Trigger AWS App Runner Deployment (if service ARN configured)
+        if: env.AWS_APP_RUNNER_ARN != ''
+        env:
+          AWS_APP_RUNNER_ARN: ${{ secrets.AWS_APP_RUNNER_ARN }}
+        run: |
+          echo "Triggering deployment for App Runner service: $AWS_APP_RUNNER_ARN"
+          aws apprunner start-deployment --service-arn $AWS_APP_RUNNER_ARN
