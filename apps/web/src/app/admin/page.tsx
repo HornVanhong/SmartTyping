@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/lib/auth/auth-context';
+import { API_BASE } from '@/lib/config/api';
 import {
   Shield,
   BookOpen,
@@ -91,8 +92,6 @@ export default function AdminPage() {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
   };
-
-  const API_BASE = 'http://localhost:8081/api/v1';
 
   // Fetch Passages
   const fetchPassages = useCallback(async () => {

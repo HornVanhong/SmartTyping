@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Trophy, Medal, Crown, Calendar, Sparkles, Filter, Clock } from 'lucide-react';
+import { API_BASE } from '@/lib/config/api';
 
 interface LeaderboardItem {
   rank: number;
@@ -23,8 +24,6 @@ interface LeaderboardResponse {
   size: number;
   totalItems: number;
 }
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/api/v1';
 
 export default function LeaderboardPage() {
   const [period, setPeriod] = useState<'DAILY' | 'WEEKLY' | 'ALL_TIME'>('ALL_TIME');

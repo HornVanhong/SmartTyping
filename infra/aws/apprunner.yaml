@@ -1,0 +1,17 @@
+version: 1.0
+runtime: custom
+build:
+  commands:
+    build:
+      - echo "Built via Dockerfile in AWS ECR or App Runner"
+run:
+  runtime-version: custom
+  command: java -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -jar app.jar --spring.profiles.active=prod
+  network:
+    port: 8081
+    env: APP_PORT
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: prod
+    - name: PORT
+      value: "8081"

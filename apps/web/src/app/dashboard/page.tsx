@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/lib/auth/auth-context';
+import { API_BASE } from '@/lib/config/api';
 import {
   Trophy,
   Zap,
@@ -58,8 +59,6 @@ interface HistoryItem {
   accuracy: number;
   createdAt: string;
 }
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/api/v1';
 
 export default function DashboardPage() {
   const { user, isLoading } = useAuth();

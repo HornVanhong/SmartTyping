@@ -5,8 +5,7 @@ import { STARTER_PASSAGES } from '@/lib/typing/starter-passages';
 import { Passage, Locale, Difficulty } from '@/lib/typing/types';
 import { BookOpen, Sparkles, Filter, ArrowRight, CheckCircle, Search } from 'lucide-react';
 import Link from 'next/link';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/api/v1';
+import { API_BASE } from '@/lib/config/api';
 
 export default function PracticePage() {
   const [passages, setPassages] = useState<Passage[]>(STARTER_PASSAGES);

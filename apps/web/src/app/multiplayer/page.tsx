@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/lib/auth/auth-context';
 import { RoomResponse, RaceProgressPayload, RoomEvent } from '@/lib/multiplayer/types';
 import { SimpleStompClient } from '@/lib/multiplayer/stomp-client';
+import { API_BASE, getWebSocketUrl } from '@/lib/config/api';
 import { LobbyView } from '@/components/multiplayer/LobbyView';
 import { RaceArena } from '@/components/multiplayer/RaceArena';
 import { Users, Plus, LogIn, Sparkles, AlertCircle, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
@@ -35,11 +36,7 @@ export default function MultiplayerPage() {
   // Initialize or update STOMP connection when room or token changes
   const connectWebSocket = useCallback((currentRoomCode: string) => {
     try {
-      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      // In development, Spring Boot backend runs on port 8081
-      const wsHost = window.location.hostname === 'localhost' ? 'localhost:8081' : window.location.host;
-      const wsUrl = `${wsProtocol}//${wsHost}/ws`;
-
+      const wsUrl = getWebSocketUrl();
       const client = new SimpleStompClient(wsUrl, token);
       stompClientRef.current = client;
 
@@ -83,7 +80,7 @@ export default function MultiplayerPage() {
     setErrorMessage(null);
 
     try {
-      const res = await fetch('http://localhost:8081/api/v1/rooms', {
+      const res = await fetch(`${API_BASE}/rooms`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +123,7 @@ export default function MultiplayerPage() {
     setErrorMessage(null);
 
     try {
-      const res = await fetch(`http://localhost:8081/api/v1/rooms/${joinCode.trim().toUpperCase()}/join`, {
+      const res = await fetch(`${API_BASE}/rooms/${joinCode.trim().toUpperCase()}/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,7 +159,7 @@ export default function MultiplayerPage() {
       }
 
       // Also send REST call for guaranteed delivery
-      const res = await fetch(`http://localhost:8081/api/v1/rooms/${room.roomCode}/ready`, {
+      const res = await fetch(`${API_BASE}/rooms/${room.roomCode}/ready`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -189,7 +186,7 @@ export default function MultiplayerPage() {
       stompClientRef.current.send('/app/race.progress', payload);
     } else {
       // Fallback to REST
-      fetch(`http://localhost:8081/api/v1/rooms/${room.roomCode}/progress`, {
+      fetch(`${API_BASE}/rooms/${room.roomCode}/progress`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -207,7 +204,7 @@ export default function MultiplayerPage() {
         if (stompClientRef.current?.isConnected()) {
           stompClientRef.current.send('/app/room.leave', { roomCode: room.roomCode });
         }
-        await fetch(`http://localhost:8081/api/v1/rooms/${room.roomCode}/leave`, {
+        await fetch(`${API_BASE}/rooms/${room.roomCode}/leave`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
         });

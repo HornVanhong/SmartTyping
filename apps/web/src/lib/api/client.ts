@@ -1,7 +1,6 @@
 import { Passage, TypingMetrics, Locale } from '../typing/types';
 import { getFallbackPassage } from '../typing/starter-passages';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/api/v1';
+import { API_BASE } from '../config/api';
 
 export interface SubmitSessionPayload {
   passageId?: string;
