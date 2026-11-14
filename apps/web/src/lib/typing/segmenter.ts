@@ -28,6 +28,8 @@ export function splitGraphemes(text: string, locale: Locale = 'en'): string[] {
   return Array.from(text);
 }
 
+export const splitIntoGraphemes = splitGraphemes;
+
 export interface CharacterMatchResult {
   grapheme: string;
   status: 'correct' | 'incorrect' | 'current' | 'pending';

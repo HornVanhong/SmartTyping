@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth/auth-context';
 import { AuthModal } from '@/components/auth/AuthModal';
-import { User, LogOut, LayoutDashboard, Keyboard, BookOpen } from 'lucide-react';
+import { User, LogOut, LayoutDashboard, Keyboard, BookOpen, Trophy, Users } from 'lucide-react';
 
 export function Navbar() {
   const { user, logout } = useAuth();
@@ -50,6 +50,22 @@ export function Navbar() {
             >
               <BookOpen className="w-4 h-4 text-accent" />
               <span>Practice</span>
+            </Link>
+
+            <Link
+              href="/multiplayer"
+              className="flex items-center gap-1.5 text-muted hover:text-foreground transition-colors py-1 px-2 rounded-lg hover:bg-elevated/60"
+            >
+              <Users className="w-4 h-4 text-accent-light" />
+              <span>Multiplayer</span>
+            </Link>
+
+            <Link
+              href="/leaderboard"
+              className="flex items-center gap-1.5 text-muted hover:text-foreground transition-colors py-1 px-2 rounded-lg hover:bg-elevated/60"
+            >
+              <Trophy className="w-4 h-4 text-amber-400" />
+              <span>Leaderboard</span>
             </Link>
 
             <Link

@@ -12,6 +12,7 @@ export interface UserProfile {
 
 interface AuthContextType {
   user: UserProfile | null;
+  token: string | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   register: (
@@ -34,16 +35,18 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/api/v
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Check current session on mount
   useEffect(() => {
     async function checkAuth() {
       try {
-        const token = localStorage.getItem('access_token');
+        const storedToken = localStorage.getItem('access_token');
+        setToken(storedToken);
         const headers: HeadersInit = { Accept: 'application/json' };
-        if (token) {
-          headers['Authorization'] = `Bearer ${token}`;
+        if (storedToken) {
+          headers['Authorization'] = `Bearer ${storedToken}`;
         }
 
         const res = await fetch(`${API_BASE}/auth/me`, {
@@ -56,6 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(data);
         } else {
           localStorage.removeItem('access_token');
+          setToken(null);
           setUser(null);
         }
       } catch {
@@ -81,6 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const data = await res.json();
         if (data.accessToken) {
           localStorage.setItem('access_token', data.accessToken);
+          setToken(data.accessToken);
         }
         setUser(data.user);
         return { success: true };
@@ -112,6 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const data = await res.json();
           if (data.accessToken) {
             localStorage.setItem('access_token', data.accessToken);
+            setToken(data.accessToken);
           }
           setUser(data.user);
           return { success: true };
@@ -145,6 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Proceed with client logout
     } finally {
       localStorage.removeItem('access_token');
+      setToken(null);
       setUser(null);
     }
   }, []);
@@ -182,7 +189,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout, updateProfile }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

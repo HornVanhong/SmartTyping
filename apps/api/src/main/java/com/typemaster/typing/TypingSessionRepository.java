@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,4 +35,18 @@ public interface TypingSessionRepository extends JpaRepository<TypingSession, UU
     List<TypingSession> findTop50ByUserIdOrderByCreatedAtDesc(UUID userId);
 
     List<TypingSession> findTop50ByUserIdAndLocaleOrderByCreatedAtDesc(UUID userId, String locale);
+
+    @Query("SELECT s FROM TypingSession s WHERE s.rankedEligible = true AND s.locale = 'en' AND (:mode IS NULL OR s.mode = :mode) AND s.createdAt >= :since ORDER BY s.wpm DESC NULLS LAST, s.accuracy DESC, s.createdAt ASC")
+    Page<TypingSession> findRankedEnglishSessions(
+            @Param("mode") String mode,
+            @Param("since") Instant since,
+            Pageable pageable
+    );
+
+    @Query("SELECT s FROM TypingSession s WHERE s.rankedEligible = true AND s.locale = 'km' AND (:mode IS NULL OR s.mode = :mode) AND s.createdAt >= :since ORDER BY s.cpm DESC, s.accuracy DESC, s.createdAt ASC")
+    Page<TypingSession> findRankedKhmerSessions(
+            @Param("mode") String mode,
+            @Param("since") Instant since,
+            Pageable pageable
+    );
 }
