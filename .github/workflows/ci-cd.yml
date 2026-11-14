@@ -7,16 +7,13 @@ on:
     branches: [main]
 
 permissions:
-  id-token: write   # Required for AWS OIDC authentication (Zero-secret authentication)
+  id-token: write
   contents: read
 
 jobs:
   test-frontend:
     name: Test Frontend (Next.js)
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/web
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,16 +22,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-          cache-dependency-path: apps/web/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        working-directory: apps/web
+        run: npm install
 
       - name: Run unit & integration tests
+        working-directory: apps/web
         run: npm run test
 
       - name: Next.js production build verification
+        working-directory: apps/web
         env:
           NEXT_PUBLIC_API_URL: https://api.typemaster.com/api/v1
           NEXT_PUBLIC_WS_URL: wss://api.typemaster.com/ws
@@ -52,7 +50,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: 'maven'
 
       - name: Run Maven tests
         run: mvn clean test -f apps/api/pom.xml
@@ -66,11 +63,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Supports both AWS OIDC Role (AWS_ROLE_ARN) and Access Keys (AWS_ACCESS_KEY_ID)
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION || 'ap-southeast-2' }}
@@ -94,11 +89,3 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -f apps/api/Dockerfile apps/api
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-      - name: Trigger AWS App Runner Deployment (if service ARN configured)
-        if: env.AWS_APP_RUNNER_ARN != ''
-        env:
-          AWS_APP_RUNNER_ARN: ${{ secrets.AWS_APP_RUNNER_ARN }}
-        run: |
-          echo "Triggering deployment for App Runner service: $AWS_APP_RUNNER_ARN"
-          aws apprunner start-deployment --service-arn $AWS_APP_RUNNER_ARN
