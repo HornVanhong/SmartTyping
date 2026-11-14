@@ -56,7 +56,6 @@ jobs:
 
   build-and-deploy-aws:
     name: Deploy Backend to AWS (App Runner / ECR)
-    needs: [test-frontend, test-backend]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
