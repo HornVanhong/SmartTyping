@@ -13,6 +13,7 @@ import { splitGraphemes, evaluateInput, CharacterMatchResult } from '@/lib/typin
 import { calculateMetrics } from '@/lib/typing/metrics';
 import { fetchRandomPassage, submitTypingSession } from '@/lib/api/client';
 import { getFallbackPassage } from '@/lib/typing/starter-passages';
+import { soundManager } from '@/lib/sound/sound-effects';
 import { RotateCcw, ArrowRight, CheckCircle2, AlertCircle, Clock, Award, Zap } from 'lucide-react';
 
 interface TypingTestProps {
@@ -129,6 +130,7 @@ export function TypingTest({
     async (finalElapsed: number, finalGraphemes: string[]) => {
       if (timerRef.current) clearInterval(timerRef.current);
       setTypingState('COMPLETED');
+      soundManager.playFinish();
 
       const evaluation = evaluateInput(targetGraphemes, finalGraphemes, false);
       const finalMetrics = calculateMetrics({
@@ -227,6 +229,7 @@ export function TypingTest({
     if (!isComposing) {
       const graphemes = splitGraphemes(val, locale);
       setTypedGraphemes(graphemes);
+      soundManager.playKeyClick(val.endsWith(' '));
     }
   };
 

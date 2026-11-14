@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth/auth-context';
 import { AuthModal } from '@/components/auth/AuthModal';
-import { User, LogOut, LayoutDashboard, Keyboard, BookOpen, Trophy, Users } from 'lucide-react';
+import { User, LogOut, LayoutDashboard, Keyboard, BookOpen, Trophy, Users, Shield } from 'lucide-react';
+import { SoundToggle } from '@/components/common/SoundToggle';
 
 export function Navbar() {
   const { user, logout } = useAuth();
@@ -76,6 +77,8 @@ export function Navbar() {
               <span>Dashboard</span>
             </Link>
 
+            <SoundToggle />
+
             <span className="text-border">|</span>
 
             {/* Auth / Profile Area */}
@@ -111,6 +114,17 @@ export function Navbar() {
                       <LayoutDashboard className="w-3.5 h-3.5 text-primary" />
                       <span>My Dashboard</span>
                     </Link>
+
+                    {(user.role === 'ADMIN' || user.role === 'MODERATOR') && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs text-amber-400 hover:bg-elevated transition-colors"
+                      >
+                        <Shield className="w-3.5 h-3.5" />
+                        <span>Admin Console</span>
+                      </Link>
+                    )}
 
                     <button
                       type="button"

@@ -83,11 +83,10 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- In-memory DB for lightweight test runs without docker -->
+        <!-- In-memory DB for lightweight runs without docker -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <!-- Testing -->

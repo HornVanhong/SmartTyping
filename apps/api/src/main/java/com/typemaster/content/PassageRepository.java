@@ -24,5 +24,7 @@ public interface PassageRepository extends JpaRepository<Passage, UUID> {
 
     Page<Passage> findByLocaleAndDifficultyAndStatus(String locale, String difficulty, String status, Pageable pageable);
 
+    Page<Passage> findByLocale(String locale, Pageable pageable);
+
     Page<Passage> findByStatus(String status, Pageable pageable);
 }

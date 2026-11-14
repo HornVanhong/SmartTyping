@@ -13,6 +13,7 @@ public record PassageResponse(
         String contentMode,
         String sourceName,
         String licenseName,
+        String status,
         Instant createdAt
 ) {
     public static PassageResponse fromEntity(Passage passage) {
@@ -26,6 +27,7 @@ public record PassageResponse(
                 passage.getContentMode(),
                 passage.getSourceName(),
                 passage.getLicenseName(),
+                passage.getStatus(),
                 passage.getCreatedAt()
         );
     }

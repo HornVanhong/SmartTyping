@@ -37,6 +37,17 @@ public class Achievement {
 
     public Achievement() {}
 
+    public Achievement(String code, String nameEn, String nameKm, String descriptionEn, String descriptionKm, String iconKey, String criteria, boolean active) {
+        this.code = code;
+        this.nameEn = nameEn;
+        this.nameKm = nameKm;
+        this.descriptionEn = descriptionEn;
+        this.descriptionKm = descriptionKm;
+        this.iconKey = iconKey;
+        this.criteria = criteria != null ? criteria : "{}";
+        this.active = active;
+    }
+
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
 

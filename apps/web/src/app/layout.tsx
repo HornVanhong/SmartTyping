@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import Link from 'next/link';
 import { AuthProvider } from '@/lib/auth/auth-context';
 import { Navbar } from '@/components/layout/Navbar';
 
@@ -31,10 +32,16 @@ export default function RootLayout({
           <footer className="border-t border-border bg-surface/40 py-8 mt-auto">
             <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted">
               <div>&copy; 2026 TypeMaster. Free &amp; Open Bilingual Typing Platform.</div>
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-4 flex-wrap">
+                <Link href="/privacy" className="hover:text-foreground transition-colors">
+                  Privacy Policy
+                </Link>
+                <span>•</span>
+                <Link href="/terms" className="hover:text-foreground transition-colors">
+                  Terms &amp; Fair Play
+                </Link>
+                <span>•</span>
                 <span>English &amp; ភាសាខ្មែរ</span>
-                <span>Accessibility Ready</span>
-                <span>Server-Authoritative</span>
               </div>
             </div>
           </footer>
