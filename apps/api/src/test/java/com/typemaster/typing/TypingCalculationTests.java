@@ -23,6 +23,9 @@ class TypingCalculationTests {
     @Mock
     private TypingSessionRepository repository;
 
+    @Mock
+    private com.typemaster.achievement.AchievementService achievementService;
+
     @InjectMocks
     private TypingSessionService service;
 

@@ -47,12 +47,18 @@ export async function fetchRandomPassage(locale: Locale, difficulty?: string): P
 
 export async function submitTypingSession(payload: SubmitSessionPayload): Promise<any> {
   try {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const res = await fetch(`${API_BASE}/typing-sessions`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
+      headers,
       credentials: 'include',
       body: JSON.stringify(payload),
     });

@@ -1,5 +1,6 @@
 package com.typemaster.typing;
 
+import com.typemaster.achievement.AchievementService;
 import com.typemaster.common.error.BadRequestException;
 import com.typemaster.common.error.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
@@ -18,9 +19,13 @@ import java.util.UUID;
 public class TypingSessionService {
 
     private final TypingSessionRepository typingSessionRepository;
+    private final AchievementService achievementService;
 
-    public TypingSessionService(TypingSessionRepository typingSessionRepository) {
+    public TypingSessionService(
+            TypingSessionRepository typingSessionRepository,
+            AchievementService achievementService) {
         this.typingSessionRepository = typingSessionRepository;
+        this.achievementService = achievementService;
     }
 
     public TypingSessionResponse processAndSaveSession(TypingSessionSubmitRequest req, UUID userId) {
@@ -81,6 +86,12 @@ public class TypingSessionService {
         session.setCreatedAt(Instant.now());
 
         TypingSession saved = typingSessionRepository.save(session);
+
+        if (userId != null) {
+            long totalCount = typingSessionRepository.countByUserIdAndCompletedTrue(userId);
+            achievementService.evaluateAndAwardAchievements(userId, saved, totalCount);
+        }
+
         return TypingSessionResponse.fromEntity(saved);
     }
 

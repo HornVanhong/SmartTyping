@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { AuthProvider } from '@/lib/auth/auth-context';
+import { Navbar } from '@/components/layout/Navbar';
 
 export const metadata: Metadata = {
-  title: 'TypeMaster — Free Bilingual English & Khmer Typing Practice',
-  description: 'Improve your typing speed and accuracy in English and Khmer with real-time feedback, guided practice, and multiplayer typing races.',
+  title: 'TypeMaster — Free Bilingual English & Khmer Typing Platform',
+  description:
+    'Improve typing speed and accuracy in English and Khmer with real-time feedback, guided practice, analytics, and multiplayer typing races.',
 };
 
 export default function RootLayout({
@@ -22,44 +25,20 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased selection:bg-primary/30 selection:text-foreground">
-        <header className="border-b border-border bg-surface/60 backdrop-blur-md sticky top-0 z-50">
-          <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center font-bold text-background text-lg shadow-sm">
-                T
-              </div>
-              <div>
-                <span className="font-bold text-lg tracking-tight text-foreground">TypeMaster</span>
-                <span className="hidden sm:inline-block ml-2 text-xs px-2 py-0.5 rounded-full bg-elevated text-muted border border-border">
-                  Bilingual EN/KM
-                </span>
+        <AuthProvider>
+          <Navbar />
+          <main className="min-h-[calc(100vh-4rem)] flex flex-col">{children}</main>
+          <footer className="border-t border-border bg-surface/40 py-8 mt-auto">
+            <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted">
+              <div>&copy; 2026 TypeMaster. Free &amp; Open Bilingual Typing Platform.</div>
+              <div className="flex items-center gap-6">
+                <span>English &amp; ភាសាខ្មែរ</span>
+                <span>Accessibility Ready</span>
+                <span>Server-Authoritative</span>
               </div>
             </div>
-
-            <nav className="flex items-center gap-4 text-sm font-medium">
-              <a href="#test" className="text-foreground hover:text-primary transition-colors">
-                Play
-              </a>
-              <span className="text-muted/40">|</span>
-              <span className="text-muted text-xs bg-elevated px-2.5 py-1 rounded-md border border-border">
-                Guest Mode
-              </span>
-            </nav>
-          </div>
-        </header>
-
-        <main className="min-h-[calc(100vh-4rem)] flex flex-col">{children}</main>
-
-        <footer className="border-t border-border bg-surface/40 py-8 mt-auto">
-          <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted">
-            <div>&copy; 2026 TypeMaster. Free &amp; Open Bilingual Typing Platform.</div>
-            <div className="flex items-center gap-6">
-              <span>English &amp; ភាសាខ្មែរ</span>
-              <span>Accessibility Ready</span>
-              <span>Server-Authoritative</span>
-            </div>
-          </div>
-        </footer>
+          </footer>
+        </AuthProvider>
       </body>
     </html>
   );

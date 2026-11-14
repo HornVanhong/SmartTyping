@@ -51,4 +51,21 @@ class FlywayScriptTest {
             assertThat(sql).contains("ប្រាសាទអង្គរវត្ត");
         }
     }
+
+    @Test
+    @DisplayName("V3 seed script contains initial achievement definitions")
+    void v3SeedContainsAchievements() throws Exception {
+        ClassPathResource resource = new ClassPathResource("db/migration/V3__seed_achievements.sql");
+        assertThat(resource.exists()).isTrue();
+
+        try (InputStream is = resource.getInputStream()) {
+            String sql = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertThat(sql).contains("FIRST_TEST");
+            assertThat(sql).contains("SPEED_50_WPM");
+            assertThat(sql).contains("SPEED_100_WPM");
+            assertThat(sql).contains("KHMER_TYPIST");
+            assertThat(sql).contains("KHMER_MASTER");
+            assertThat(sql).contains("ACCURACY_98");
+        }
+    }
 }
